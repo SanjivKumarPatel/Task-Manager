@@ -13,9 +13,10 @@ app.use(express.json());
 
 const PORT = process.env.PORT || 3001;
 
-mongoose.connect(process.env.MONGODB_URI)
-.then(() => console.log("MongoDB connected successfully"))
-.catch((err) => console.log("MongoDB connection error:", err));
+mongoose
+  .connect(process.env.MONGODB_URI)
+  .then(() => console.log("MongoDB connected successfully"))
+  .catch((err) => console.log("MongoDB connection error:", err));
 
 app.get("/task", (req, res) => {
   res.send("Task Route Working");
