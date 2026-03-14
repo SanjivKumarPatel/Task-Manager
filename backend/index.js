@@ -4,6 +4,7 @@ import dotenv from "dotenv";
 import dns from "dns";
 import cors from "cors";
 import authRoutes from "./routes/authRoutes.js";
+import taskRoutes from "./routes/taskRoutes.js";
 
 dns.setDefaultResultOrder("ipv4first");
 
@@ -14,6 +15,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 app.use("/auth", authRoutes);
+app.use("/tasks", taskRoutes);
 
 const PORT = process.env.PORT || 3001;
 

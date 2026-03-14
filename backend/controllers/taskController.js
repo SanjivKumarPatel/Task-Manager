@@ -8,7 +8,7 @@ export const createTask = async (req, res) => {
     }
     const validStatuses = ["Pending", "In-process", "Completed"];
     if (!validStatuses.includes(status)) {
-      return res.status(400).json({ message: "Invalid Status" });
+      return res.status(400).json({ message: "Invalid status" });
     }
     const validPriorities = ["High", "Medium", "Low"];
     if (!validPriorities.includes(priority)) {
@@ -31,8 +31,8 @@ export const createTask = async (req, res) => {
       task: savedTask,
     });
   } catch (error) {
-    res
-      .status(500)
-      .json({ message: "Internal Server Error. Please try again later." });
+    console.log("Error Details:", error.message)
+    res.status(500).json({ message: "Internal Server Error. Please try again later." });
   }
 };
+
