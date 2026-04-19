@@ -1,33 +1,36 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import dns from "dns";
-import cors from "cors";
-import authRoutes from "./routes/authRoutes.js";
-import taskRoutes from "./routes/taskRoutes.js";
+import express from 'express'
+import dotenv from 'dotenv'
+import dns from 'dns'
+import cors from 'cors'
+import authRoutes from './routes/authRoutes.js'
+import taskRoutes from './routes/taskRoutes.js'
+import connectDB from './config/db.js'
+import errorMiddleware from './middleware/errorMiddleware.js'
 
-dns.setDefaultResultOrder("ipv4first");
+dns.setDefaultResultOrder('ipv4first')
 
-dotenv.config();
+dotenv.config()
 
-const app = express();
+const app = express()
 
-app.use(express.json());
-app.use(cors());
-app.use("/auth", authRoutes);
-app.use("/tasks", taskRoutes);
+app.use(express.json())
+app.use(cors())
+app.use('/auth', authRoutes)
+app.use('/tasks', taskRoutes)
 
-const PORT = process.env.PORT || 3001;
+app.use(errorMiddleware)
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connected successfully"))
-  .catch((err) => console.log("MongoDB connection error:", err));
+const PORT = process.env.PORT || 3001
 
-app.get("/task", (req, res) => {
-  res.send("Task Route Working");
-});
+(async () => {
+  await connectDB()
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+  app.get('/task', (req, res) => {
+    res.send('Task Route Working')
+  })
+
+  app.listen(PORT, () => {
+    console.log(`Server running on port ${PORT}`)
+  })
+  
+})()
