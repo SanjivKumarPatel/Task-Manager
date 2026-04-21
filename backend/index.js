@@ -1,10 +1,13 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import dns from 'dns'
 import cors from 'cors'
+import dns from 'dns'
+
+import connectDB from './config/db.js'
+
 import authRoutes from './routes/authRoutes.js'
 import taskRoutes from './routes/taskRoutes.js'
-import connectDB from './config/db.js'
+
 import errorMiddleware from './middleware/errorMiddleware.js'
 
 dns.setDefaultResultOrder('ipv4first')
@@ -12,25 +15,31 @@ dns.setDefaultResultOrder('ipv4first')
 dotenv.config()
 
 const app = express()
+const PORT = process.env.PORT || 3001
 
-app.use(express.json())
 app.use(cors())
-app.use('/auth', authRoutes)
-app.use('/tasks', taskRoutes)
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use('/api/auth', authRoutes)
+app.use('/api/tasks', taskRoutes)
+
+app.get('/', (req, res) => {
+  res.send('TaskNova API running')
+})
 
 app.use(errorMiddleware)
 
-const PORT = process.env.PORT || 3001
+const startServer = async () =>{
+  try {
+    await connectDB()
 
-(async () => {
-  await connectDB()
+    app.listen(PORT, () => {
+      console.log(`Server running on port ${PORT}`)
+    })
+  } catch(error) {
+      console.error(error.message)
+      process.exit(1)
+  }
+}
 
-  app.get('/task', (req, res) => {
-    res.send('Task Route Working')
-  })
-
-  app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`)
-  })
-  
-})()
+startServer()
