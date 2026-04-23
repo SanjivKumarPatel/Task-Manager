@@ -7,6 +7,7 @@ import connectDB from './config/db.js'
 
 import authRoutes from './routes/authRoutes.js'
 import taskRoutes from './routes/taskRoutes.js'
+import teamRoutes from './routes/teamRoutes.js'
 
 import errorMiddleware from './middleware/errorMiddleware.js'
 
@@ -22,9 +23,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use('/api/auth', authRoutes)
 app.use('/api/tasks', taskRoutes)
+app.use('/api/teams', teamRoutes)
 
 app.get('/', (req, res) => {
-  res.send('TaskNova API running')
+  res.send('🚀 TaskNova API running')
 })
 
 app.use(errorMiddleware)
@@ -34,7 +36,7 @@ const startServer = async () =>{
     await connectDB()
 
     app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`)
+      console.log(`🚀 Server running on port ${PORT}`)
     })
   } catch(error) {
       console.error(error.message)
