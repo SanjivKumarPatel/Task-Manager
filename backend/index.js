@@ -5,9 +5,10 @@ import dns from 'dns'
 
 import connectDB from './config/db.js'
 
-import authRoutes from './routes/authRoutes.js'
-import taskRoutes from './routes/taskRoutes.js'
-import teamRoutes from './routes/teamRoutes.js'
+import authRouter from './routes/authRoutes.js'
+import taskRouter from './routes/taskRoutes.js'
+import teamRouter from './routes/teamRoutes.js'
+import notificationRouter from './routes/notificationRoutes.js'
 
 import errorMiddleware from './middleware/errorMiddleware.js'
 
@@ -21,9 +22,10 @@ const PORT = process.env.PORT || 3001
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use('/api/auth', authRoutes)
-app.use('/api/tasks', taskRoutes)
-app.use('/api/teams', teamRoutes)
+app.use('/api/auth', authRouter)
+app.use('/api/tasks', taskRouter)
+app.use('/api/teams', teamRouter)
+app.use('/api/notifications', notificationRouter)
 
 app.get('/', (req, res) => {
   res.send('🚀 TaskNova API running')
