@@ -1,33 +1,49 @@
-import express from "express";
-import mongoose from "mongoose";
-import dotenv from "dotenv";
-import dns from "dns";
-import cors from "cors";
-import authRoutes from "./routes/authRoutes.js";
-import taskRoutes from "./routes/taskRoutes.js";
+import express from 'express'
+import dotenv from 'dotenv'
+import cors from 'cors'
+import dns from 'dns'
 
-dns.setDefaultResultOrder("ipv4first");
+import connectDB from './config/db.js'
 
-dotenv.config();
+import authRouter from './routes/authRoutes.js'
+import taskRouter from './routes/taskRoutes.js'
+import teamRouter from './routes/teamRoutes.js'
+import notificationRouter from './routes/notificationRoutes.js'
 
-const app = express();
+import errorMiddleware from './middleware/errorMiddleware.js'
 
-app.use(express.json());
-app.use(cors());
-app.use("/auth", authRoutes);
-app.use("/tasks", taskRoutes);
+dns.setDefaultResultOrder('ipv4first')
 
-const PORT = process.env.PORT || 3001;
+dotenv.config()
 
-mongoose
-  .connect(process.env.MONGODB_URI)
-  .then(() => console.log("MongoDB connected successfully"))
-  .catch((err) => console.log("MongoDB connection error:", err));
+const app = express()
+const PORT = process.env.PORT || 3001
 
-app.get("/task", (req, res) => {
-  res.send("Task Route Working");
-});
+app.use(cors())
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
+app.use('/api/auth', authRouter)
+app.use('/api/tasks', taskRouter)
+app.use('/api/teams', teamRouter)
+app.use('/api/notifications', notificationRouter)
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
-});
+app.get('/', (req, res) => {
+  res.send('🚀 TaskNova API running')
+})
+
+app.use(errorMiddleware)
+
+const startServer = async () =>{
+  try {
+    await connectDB()
+
+    app.listen(PORT, () => {
+      console.log(`🚀 Server running on port ${PORT}`)
+    })
+  } catch(error) {
+      console.error(error.message)
+      process.exit(1)
+  }
+}
+
+startServer()
