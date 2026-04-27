@@ -5,7 +5,8 @@ export const AuthContext = createContext()
 export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(null)
   const [user, setUser] = useState(null)
-  const [isLoggedin, setIsLoggedin] = useState(false)
+  const [isLoggedIn, setIsLoggedIn] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const storedToken = localStorage.getItem('token')
@@ -14,14 +15,16 @@ export const AuthProvider = ({ children }) => {
     if (storedToken) {
       setToken(storedToken)
       setUser(storedUser ? JSON.parse(storedUser) : null)
-      setIsLoggedin(true)
+      setIsLoggedIn(true)
     }
+
+    setLoading(false)
   }, [])
 
   const register = (userData, userToken) => {
     setUser(userData)
     setToken(userToken)
-    setIsLoggedin(true)
+    setIsLoggedIn(true)
     localStorage.setItem('token', userToken)
     localStorage.setItem('user', JSON.stringify(userData))
   }
@@ -29,7 +32,7 @@ export const AuthProvider = ({ children }) => {
   const login = (userData, userToken) => {
     setUser(userData)
     setToken(userToken)
-    setIsLoggedin(true)
+    setIsLoggedIn(true)
     localStorage.setItem('token', userToken)
     localStorage.setItem('user', JSON.stringify(userData))
   }
@@ -42,7 +45,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     setUser(null)
     setToken(null)
-    setIsLoggedin(false)
+    setIsLoggedIn(false)
     localStorage.removeItem('token')
     localStorage.removeItem('user')
   }
@@ -53,10 +56,11 @@ export const AuthProvider = ({ children }) => {
         token,
         user,
         register,
-        isLoggedin,
+        isLoggedIn,
         login,
         updateUser,
-        logout
+        logout,
+        loading
       }}
     >
       {children}
