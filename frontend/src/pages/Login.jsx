@@ -47,7 +47,7 @@ function Login() {
 
   return (
     <div
-      className='min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat'
+      className='min-h-screen flex items-center justify-center px-4 bg-cover bg-center bg-no-repeat relative'
       style={{
         backgroundImage: `url(${loginBg})`
       }}
@@ -167,7 +167,7 @@ function Login() {
 
         {/* footer */}
         <p className='text-center text-sm text-gray-300 mt-6'>
-          Don't have an account?{' '}
+          Don&apos;t have an account?{' '}
           <Link
             to='/register'
             className='text-blue-400 hover:text-blue-300 font-medium'
