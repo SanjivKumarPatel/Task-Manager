@@ -35,7 +35,7 @@ function Login() {
     setError('')
 
     try {
-      const res = await authApi.login(formData.email, formData.password)
+      const res = await authApi.loginUser(formData.email, formData.password)
       login(res.data.user, res.data.token)
       navigate('/dashboard')
     } catch (err) {
