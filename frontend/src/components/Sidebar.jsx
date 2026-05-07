@@ -1,5 +1,5 @@
 import { NavLink } from 'react-router-dom'
-import { LayoutDashboard, ClipboardList, Users, Bell, User } from 'lucide-react'
+import { LayoutDashboard, Home, ClipboardList, Users, Bell, User } from 'lucide-react'
 
 function Sidebar() {
   const menuItems = [
@@ -7,6 +7,11 @@ function Sidebar() {
       name: 'Dashboard',
       path: '/dashboard',
       icon: LayoutDashboard
+    },
+    {
+      name: 'Home',
+      path: '/',
+      icon: Home
     },
     {
       name: 'Tasks',
@@ -30,7 +35,7 @@ function Sidebar() {
     }
   ]
   return (
-    <aside className='w-[280px] min-h-screen bg-slate-100 border-r border-slate-200 px-8 py-8'>
+    <aside className='w-[280px] h-screen bg-slate-100 border-r border-slate-200 px-8 py-8 overflow-y-auto'>
       {/* logo */}
       <div>
         <div className='flex items-center gap-3'>
