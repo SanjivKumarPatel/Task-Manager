@@ -1,513 +1,462 @@
-import { useEffect, useState, useContext } from 'react'
+import { useEffect, useState } from 'react'
 import {
-  Users,
-  Plus,
-  Trash2,
-  Pencil,
-  UserPlus
+    Users,
+    Plus,
+    Trash2,
+    Pencil,
+    UserPlus,
+    X
 } from 'lucide-react'
 
-import { teamApi } from '../services/api'
-import { AuthContext } from '../context/AuthContext'
-import Loader from '../components/Loader'
+import { teamApi } from '../services/api.js'
+import Loader from '../components/Loader.jsx'
 
 function Teams() {
-  const { isLoggedIn } = useContext(AuthContext)
+    const [teams, setTeams] = useState([])
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState('')
+    const [showForm, setShowForm] = useState(false)
+    const [editTeamId, setEditTeamId] = useState(null)
 
-  const [teams, setTeams] = useState([])
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-
-  const [showForm, setShowForm] = useState(false)
-
-  const [formData, setFormData] = useState({
-    name: '',
-    description: ''
-  })
-
-  const [editTeamId, setEditTeamId] = useState(null)
-
-  const [editFormData, setEditFormData] = useState({
-    name: '',
-    description: ''
-  })
-
-  const [memberInputs, setMemberInputs] = useState({})
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetchTeams()
-    }
-  }, [isLoggedIn])
-
-  const fetchTeams = async () => {
-    try {
-      setLoading(true)
-      setError('')
-
-      const res = await teamApi.getAllTeams()
-
-      setTeams(res.data.teams || [])
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          'Failed to fetch teams'
-      )
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleCreateTeam = async (e) => {
-    e.preventDefault()
-
-    if (!formData.name.trim()) {
-      return setError('Team name is required')
-    }
-
-    try {
-      setError('')
-
-      const res = await teamApi.createTeam(
-        formData.name,
-        formData.description
-      )
-
-      setTeams((prev) => [res.data.team, ...prev])
-
-      setFormData({
+    const [formData, setFormData] = useState({
         name: '',
         description: ''
-      })
-
-      setShowForm(false)
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          'Failed to create team'
-      )
-    }
-  }
-
-  const handleEditClick = (team) => {
-    setEditTeamId(team._id)
-
-    setEditFormData({
-      name: team.name,
-      description: team.description
     })
-  }
 
-  const handleUpdateTeam = async (e) => {
-    e.preventDefault()
-
-    try {
-      const res = await teamApi.updateTeam(
-        editTeamId,
-        editFormData.name,
-        editFormData.description
-      )
-
-      setTeams((prev) =>
-        prev.map((team) =>
-          team._id === editTeamId
-            ? res.data.team
-            : team
-        )
-      )
-
-      setEditTeamId(null)
-
-      setEditFormData({
+    const [editFormData, setEditFormData] = useState({
         name: '',
         description: ''
-      })
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          'Failed to update team'
-      )
-    }
-  }
+    })
 
-  const handleDeleteTeam = async (teamId) => {
-    try {
-      await teamApi.deleteTeam(teamId)
+    const [memberInputs, setMemberInputs] = useState({})
+    useEffect(() => {
+        fetchTeams()
+    }, [])
 
-      setTeams((prev) =>
-        prev.filter((team) => team._id !== teamId)
-      )
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          'Failed to delete team'
-      )
-    }
-  }
+    const fetchTeams = async () => {
+        try {
+            setLoading(true)
+            setError('')
 
-  const handleAddMember = async (teamId) => {
-    const memberId = memberInputs[teamId]
-
-    if (!memberId?.trim()) {
-      return setError('Member ID is required')
+            const res = await teamApi.getAllTeams()
+            setTeams(res.data.teams || [])
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                'Failed to fetch teams'
+            )
+        } finally {
+            setLoading(false)
+        }
     }
 
-    try {
-      const res = await teamApi.addMember(
+    const resetForm = () => {
+        setFormData({
+            name: '',
+            description: ''
+        })
+        setShowForm(false)
+    }
+
+    const handleCreateTeam = async (e) => {
+        e.preventDefault()
+
+        if (!formData.name.trim()) {
+            return setError('Team name is required')
+        }
+
+        try {
+            setError('')
+
+            const res = await teamApi.createTeam(
+                formData.name,
+                formData.description
+            )
+
+            setTeams((prev) => [res.data.team, ...prev])
+            resetForm()
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                  'Failed to create team'
+            )
+        }
+    }
+
+    const handleEditClick = (team) => {
+        setEditTeamId(team._id)
+        setEditFormData({
+            name: team.name,
+            description: team.description
+        })
+    }
+
+    const handleUpdateTeam = async (e) => {
+        e.preventDefault()
+
+        try {
+            const res = await teamApi.updateTeam(
+                editTeamId,
+                editFormData.name,
+                editFormData.description
+            )
+
+            setTeams((prev) =>
+            prev.map((team) =>
+                team._id === editTeamId
+                  ? res.data.team
+                  : team
+            )
+        )
+
+        setEditTeamId(null)
+        setEditFormData({
+            name: '',
+            description: ''
+        })
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                  'Failed to update team'
+            )
+        }
+    }
+
+    const handleDeleteTeam = async (teamId) => {
+        try {
+            await teamApi.deleteTeam(teamId)
+            setTeams((prev) =>
+                prev.filter((team) => team._id !== teamId)
+            )
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                  'Failed to delete team'
+            )
+        }
+    }
+
+        const handleAddMember = async (teamId) => {
+        const memberId = memberInputs[teamId]
+
+        if (!memberId?.trim()) {
+            return setError('Member ID is required')
+        }
+
+        try {
+            const res = await teamApi.addMember(teamId, memberId)
+
+            setTeams((prev) =>
+                prev.map((team) =>
+                    team._id === teamId
+                      ? res.data.team
+                      : team
+                )
+            )
+
+            setMemberInputs((prev) => ({
+                ...prev,
+                [teamId]: ''
+            }))
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                  'Failed to add member'
+            )
+        }
+    }
+
+    const handleRemoveMember = async (
         teamId,
         memberId
-      )
+    ) => {
+        try {
+            const res = await teamApi.removeMember(
+                teamId,
+                memberId
+            )
 
-      setTeams((prev) =>
-        prev.map((team) =>
-          team._id === teamId
-            ? res.data.team
-            : team
-        )
-      )
-
-      setMemberInputs((prev) => ({
-        ...prev,
-        [teamId]: ''
-      }))
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          'Failed to add member'
-      )
+            setTeams((prev) =>
+                prev.map((team) =>
+                    team._id === teamId
+                      ? res.data.team
+                      : team
+                )
+            )
+        } catch (err) {
+            setError(
+                err.response?.data?.message ||
+                  'Failed to remove member'
+            )
+        }
     }
-  }
-
-  const handleRemoveMember = async (
-    teamId,
-    memberId
-  ) => {
-    try {
-      const res = await teamApi.removeMember(
-        teamId,
-        memberId
-      )
-
-      setTeams((prev) =>
-        prev.map((team) =>
-          team._id === teamId
-            ? res.data.team
-            : team
-        )
-      )
-    } catch (err) {
-      setError(
-        err.response?.data?.message ||
-          'Failed to remove member'
-      )
-    }
-  }
-
-  return (
+return (
     <div className='w-full'>
 
-      {/* header */}
-      <div className='mb-8 flex items-center justify-between'>
+        {/* header */}
+        <div className='mb-8 flex items-center justify-between'>
+            <div>
+                <h1 className='text-3xl font-bold text-slate-900'>
+                    Teams
+                </h1>
 
-        <div>
-          <h1 className='text-3xl font-bold text-slate-900'>
-            Teams
-          </h1>
+                <p className='mt-2 text-slate-500'>
+                    Manage your teams and collaborate efficiently.
+                </p>
+            </div>
 
-          <p className='mt-2 text-slate-500'>
-            Manage your teams and collaborate efficiently.
-          </p>
-        </div>
-
-        {!showForm && (
-          <button
-            onClick={() => setShowForm(true)}
-            className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700'
-          >
-            <Plus size={18} />
-            Create Team
-          </button>
-        )}
-
-      </div>
-
-      {/* error */}
-      {error && (
-        <div className='mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600'>
-          {error}
-        </div>
-      )}
-
-      {/* create form */}
-      {showForm && (
-        <form
-          onSubmit={handleCreateTeam}
-          className='mb-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm'
-        >
-
-          <h2 className='mb-5 text-xl font-semibold text-slate-800'>
-            Create New Team
-          </h2>
-
-          <div className='space-y-5'>
-
-            <input
-              type='text'
-              value={formData.name}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  name: e.target.value
-                })
-              }
-              placeholder='Enter team name'
-              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500'
-            />
-
-            <textarea
-              rows='4'
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  description: e.target.value
-                })
-              }
-              placeholder='Enter team description'
-              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none transition focus:border-blue-500'
-            ></textarea>
-
-            <div className='flex gap-3'>
-
-              <button
-                type='submit'
-                className='rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700'
-              >
-                Create
-              </button>
-
-              <button
-                type='button'
-                onClick={() => setShowForm(false)}
-                className='rounded-2xl border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 transition hover:bg-slate-100'
-              >
-                Cancel
-              </button>
+            {!showForm && (
+                <button
+                  onClick={() => setShowForm(true)}
+                  className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700'>
+                    <Plus size={18} />
+                    Create Team
+                  </button>
+            )}
 
             </div>
 
-          </div>
-
-        </form>
-      )}
-
-      {/* loading */}
-      {loading ? (
-        <Loader />
-      ) : teams.length === 0 ? (
-
-        /* empty state */
-        <div className='rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm'>
-
-          <div className='mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600'>
-            <Users size={30} />
-          </div>
-
-          <h2 className='mt-5 text-xl font-semibold text-slate-800'>
-            No Teams Found
-          </h2>
-
-          <p className='mt-2 text-sm text-slate-500'>
-            Create your first team to start collaborating.
-          </p>
-
-        </div>
-      ) : (
-
-        /* teams grid */
-        <div className='grid gap-6 lg:grid-cols-2'>
-
-          {teams.map((team) => (
-            <div
-              key={team._id}
-              className='rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md'
-            >
-
-              {/* top */}
-              <div className='flex items-start justify-between'>
-
-                <div>
-                  <h3 className='text-xl font-semibold text-slate-800'>
-                    {team.name}
-                  </h3>
-
-                  <p className='mt-2 text-sm leading-6 text-slate-500'>
-                    {team.description || 'No description'}
-                  </p>
+            {/* error */}
+            {error && (
+                <div className='mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600'>
+                    {error}
                 </div>
+            )}
 
-                <div className='flex gap-2'>
-
-                  <button
-                    onClick={() =>
-                      handleEditClick(team)
-                    }
-                    className='rounded-xl border border-green-200 bg-green-50 p-3 text-green-600 transition hover:bg-green-100'
-                  >
-                    <Pencil size={18} />
-                  </button>
-
-                  <button
-                    onClick={() =>
-                      handleDeleteTeam(team._id)
-                    }
-                    className='rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 transition hover:bg-red-100'
-                  >
-                    <Trash2 size={18} />
-                  </button>
-
-                </div>
-
-              </div>
-
-              {/* edit form */}
-              {editTeamId === team._id && (
+            {/* create form */}
+            {showForm && (
                 <form
-                  onSubmit={handleUpdateTeam}
-                  className='mt-5 space-y-4'
-                >
+                  onSubmit={handleCreateTeam}
+                  className='mb-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm'>
 
-                  <input
-                    type='text'
-                    value={editFormData.name}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        name: e.target.value
-                      })
-                    }
-                    className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
-                  />
+                    <h2 className='mb-5 text-xl font-semibold text-slate-800'>
+                        Create New Team
+                    </h2>
 
-                  <textarea
-                    rows='3'
-                    value={editFormData.description}
-                    onChange={(e) =>
-                      setEditFormData({
-                        ...editFormData,
-                        description: e.target.value
-                      })
-                    }
-                    className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
-                  ></textarea>
-
-                  <div className='flex gap-3'>
-
-                    <button
-                      type='submit'
-                      className='rounded-2xl bg-blue-600 px-5 py-2 text-white hover:bg-blue-700'
-                    >
-                      Save
-                    </button>
-
-                    <button
-                      type='button'
-                      onClick={() =>
-                        setEditTeamId(null)
-                      }
-                      className='rounded-2xl border border-slate-300 px-5 py-2 hover:bg-slate-100'
-                    >
-                      Cancel
-                    </button>
-
-                  </div>
-
-                </form>
-              )}
-
-              {/* members */}
-              <div className='mt-6'>
-
-                <h4 className='mb-3 font-semibold text-slate-700'>
-                  Team Members
-                </h4>
-
-                {team.members &&
-                team.members.length > 0 ? (
-                  <div className='space-y-3'>
-
-                    {team.members.map((member) => (
-                      <div
-                        key={member._id}
-                        className='flex items-center justify-between rounded-2xl bg-slate-100 px-4 py-3'
-                      >
-
-                        <span className='text-sm font-medium text-slate-700'>
-                          {member.name}
-                        </span>
-
-                        <button
-                          onClick={() =>
-                            handleRemoveMember(
-                              team._id,
-                              member._id
-                            )
+                    <div className='space-y-5'>
+                        
+                        <input
+                          type='text'
+                          value={formData.name}
+                          onChange={(e) =>
+                            setFormData({
+                                ...formData,
+                                name: e.target.value
+                            })
                           }
-                          className='text-sm text-red-500 hover:text-red-700'
-                        >
-                          Remove
-                        </button>
 
-                      </div>
-                    ))}
+                          placeholder='Enter team name'
+                          className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500' />
 
-                  </div>
-                ) : (
-                  <p className='text-sm text-slate-500'>
-                    No members added
-                  </p>
-                )}
+                          <textarea
+                            rows='4'
+                            value={formData.description}
+                            onChange={(e) =>
+                                setFormData({
+                                    ...formData,
+                                    description: e.target.value
+                                })
+                            }
+                            placeholder='Enter team description'
+                            className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'></textarea>
+                            <div className='flex gap-3'>
+                                <button
+                                  type='submit'
+                                  className='rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700'>
+                                    Create
+                                  </button>
 
-                {/* add member */}
-                <div className='mt-5 flex gap-3'>
+                                  <button
+                                    type='button'
+                                    onClick={resetForm}
+                                    className='rounded-2xl border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 transition hover:bg-slate-100'>
+                                        Cancel
+                                    </button>
+                            </div>
+                    </div>
+                  </form>
+            )}
 
-                  <input
-                    type='text'
-                    value={
-                      memberInputs[team._id] || ''
-                    }
-                    onChange={(e) =>
-                      setMemberInputs((prev) => ({
-                        ...prev,
-                        [team._id]:
-                          e.target.value
-                      }))
-                    }
-                    placeholder='Enter member ID'
-                    className='flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
-                  />
+            {/* loading */}
+            {loading ? (
+                <Loader />
+            ) : teams.length === 0 ? (
+                /* empty state */
+                <div className='rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm'>
+                    <div className='mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600'>
+                        <Users size={30} />
+                    </div>
 
-                  <button
-                    onClick={() =>
-                      handleAddMember(team._id)
-                    }
-                    className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 text-white hover:bg-blue-700'
-                  >
-                    <UserPlus size={18} />
-                    Add
-                  </button>
+                    <h2 className='mt-5 text-xl font-semibold text-slate-800'>
+                        No Teams Found
+                    </h2>
+
+                    <p className='mt-2 text-sm text-slate-500'>
+                        Create your first team
+                    </p>
 
                 </div>
+            ) : (
 
-              </div>
+                /* teams grid */
+                <div className='grid gap-6 lg:grid-cols-2'>
 
-            </div>
-          ))}
+                    {teams.map((team) => (
+                        <div
+                          key={team._id}
+                          className='rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md'>
 
-        </div>
-      )}
+                          {/* top */}
+                          <div className='flex items-start justify-between'>
+                            <div>
+                                <h3 className='text-xl font-semibold text-slate-800'>
+                                    {team.name}
+                                </h3>
+
+                                <p className='mt-2 text-sm leading-6 text-slate-500'>
+                                    {team.description || 'No description'}
+                                </p>
+                            </div>
+
+                            <div className='flex gap-2'>
+                                <button  onClick={() =>
+                                    handleEditClick(team)
+                                }
+                                className='rounded-xl border border-green-200 bg-green-50 p-3 text-green-600 transition hover:bg-green-100'>
+                                    <Pencil size={18} />
+                                </button>
+
+                                <button
+                                  onClick={() =>
+                                    handleDeleteTeam(team._id)
+                                  }
+                                  className='rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 transition hover:bg-red-100'>
+                                    <Trash2 size={18} />
+                                  </button>
+                            </div>
+
+                        </div>
+
+                        {/* edit form */}
+                        {editTeamId === team._id && (
+                            <form
+                              onSubmit={handleUpdateTeam}
+                              className='mt-5 space-y-4'
+                            >
+                                <input
+                                  type='text'
+                                  value={editFormData.name}
+                                  onChange={(e) =>
+                                    setEditFormData({
+                                        ...editFormData,
+                                        name: e.target.value
+                                    })
+                                  }
+                                  className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500' />
+
+                                  <textarea
+                                    rows='3'
+                                    value={editFormData.description}
+                                    onChange={(e) =>
+                                        setEditFormData({
+                                        ...editFormData,
+                                        description: e.target.value
+                                    })
+                                }
+                                className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'></textarea>
+
+                                <div className='flex gap-3'>
+                                    <button
+                                      type='submit'
+                                      className='rounded-2xl bg-blue-600 px-5 py-2 font-medium text-white hover:bg-blue-700'>Save</button>
+
+                                    <button
+                                      type='button'
+                                      onClick={() =>
+                                        setEditTeamId(null)
+                                      }
+                                      className='rounded-2xl border border-slate-300 px-5 py-2 font-medium text-slate-700 hover:bg-slate-100'>Cancel</button>
+
+                                </div>
+                            </form>
+                        )}
+
+                        {/* members */}
+                        <div className='mt-6'>
+                            <h4 className='mb-3 font-semibold text-slate-700'>
+                                Team Members ({team.members?.length || 0})
+                            </h4>
+
+                            {team.members &&
+                            team.members.length > 0? (
+                                <div className='space-y-3'>
+                                    {team.members.map((member) => (
+                                        <div
+                                          key={member._id}
+                                          className='flex items-center justify-between rounded-2xl bg-slate-100 px-4 py-3'>
+
+                                          <div>
+                                            <span className='block text-sm font-medium text-slate-700'>
+                                                {member.name}
+                                            </span>
+                                            <span className='text-xs text-slate-500'>
+                                                {member.email}
+                                            </span>
+                                        </div>
+
+                                        <button
+                                          onClick={() =>
+                                            handleRemoveMember(
+                                                team._id,
+                                                member._id
+                                            )
+                                          }
+                                          className='rounded-lg p-2 text-red-500 hover:bg-red-100'>
+                                            <X size={16} />
+                                          </button>
+
+                                        </div>
+                                    ))}
+                                </div>
+                            ) : (
+                                <p className='text-sm text-slate-500'>
+                                    No members added yet
+                                </p>
+                            )}
+
+                            {/* add member */}
+                            <div className='mt-5 flex gap-3'>
+                                <input
+                                  type='text'
+                                  value={
+                                    memberInputs[team._id]  || ''
+                                  }
+                                  onChange={(e) =>
+                                    setMemberInputs((prev) => ({
+                                        ...prev,
+                                        [team._id]:
+                                          e.target.value
+                                    }))
+                                  }
+                                  placeholder='Enter member Id'
+                                  className='flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500' />
+                                  <button
+                                    onClick={() =>
+                                        handleAddMember(team._id)
+                                    }
+                                    className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700'>
+                                        <UserPlus size={18} />
+                                        Add
+                                    </button>
+                            </div>
+                        </div>
+                    </div>
+                    ))}
+                </div>
+            )}
+        
     </div>
-  )
+)
 }
 
 export default Teams
