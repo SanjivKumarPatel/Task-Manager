@@ -39,7 +39,7 @@ function Register() {
     try {
       setLoading(true)
 
-      const res = await authApi.register(
+      const res = await authApi.registerUser(
         formData.name,
         formData.email,
         formData.password
