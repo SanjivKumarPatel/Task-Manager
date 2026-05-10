@@ -38,19 +38,20 @@ export const authApi = {
 }
 
 export const taskApi = {
-  createTask: (title, description, deadline, assignedTo) =>
-    api.post('/tasks', { title, description, deadline, assignedTo }),
+  createTask: (title, description, deadline, priority, category) =>
+    api.post('/tasks', { title, description, deadline, priority, category }),
 
   getAllTasks: () => api.get('/tasks'),
 
   getTask: (taskId) => api.get(`/tasks/${taskId}`),
 
-  updateTask: (taskId, title, description, deadline, assignedTo, status) =>
+  updateTask: (taskId, title, description, deadline, priority, category, status) =>
     api.put(`/tasks/${taskId}`, {
       title,
       description,
       deadline,
-      assignedTo,
+      priority,
+      category,
       status
     }),
 
