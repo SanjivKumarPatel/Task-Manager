@@ -143,13 +143,13 @@ function Teams() {
     }
   }
   return (
-    <div className="w-full">
+    <div className='w-full'>
       {/* header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className='mb-8 flex items-center justify-between'>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Teams</h1>
+          <h1 className='text-3xl font-bold text-slate-900'>Teams</h1>
 
-          <p className="mt-2 text-slate-500">
+          <p className='mt-2 text-slate-500'>
             Manage your teams and collaborate efficiently.
           </p>
         </div>
@@ -157,7 +157,7 @@ function Teams() {
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
+            className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700'
           >
             <Plus size={18} />
             Create Team
@@ -167,7 +167,7 @@ function Teams() {
 
       {/* error */}
       {error && (
-        <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className='mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600'>
           {error}
         </div>
       )}
@@ -176,15 +176,15 @@ function Teams() {
       {showForm && (
         <form
           onSubmit={handleCreateTeam}
-          className="mb-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+          className='mb-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm'
         >
-          <h2 className="mb-5 text-xl font-semibold text-slate-800">
+          <h2 className='mb-5 text-xl font-semibold text-slate-800'>
             Create New Team
           </h2>
 
-          <div className="space-y-5">
+          <div className='space-y-5'>
             <input
-              type="text"
+              type='text'
               value={formData.name}
               onChange={(e) =>
                 setFormData({
@@ -192,12 +192,12 @@ function Teams() {
                   name: e.target.value
                 })
               }
-              placeholder="Enter team name"
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+              placeholder='Enter team name'
+              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
             />
 
             <textarea
-              rows="4"
+              rows='4'
               value={formData.description}
               onChange={(e) =>
                 setFormData({
@@ -205,21 +205,21 @@ function Teams() {
                   description: e.target.value
                 })
               }
-              placeholder="Enter team description"
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+              placeholder='Enter team description'
+              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
             ></textarea>
-            <div className="flex gap-3">
+            <div className='flex gap-3'>
               <button
-                type="submit"
-                className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700"
+                type='submit'
+                className='rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white transition hover:bg-blue-700'
               >
                 Create
               </button>
 
               <button
-                type="button"
+                type='button'
                 onClick={resetForm}
-                className="rounded-2xl border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 transition hover:bg-slate-100"
+                className='rounded-2xl border border-slate-300 bg-white px-6 py-3 font-medium text-slate-700 transition hover:bg-slate-100'
               >
                 Cancel
               </button>
@@ -233,48 +233,48 @@ function Teams() {
         <Loader />
       ) : teams.length === 0 ? (
         /* empty state */
-        <div className="rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+        <div className='rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm'>
+          <div className='mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600'>
             <Users size={30} />
           </div>
 
-          <h2 className="mt-5 text-xl font-semibold text-slate-800">
+          <h2 className='mt-5 text-xl font-semibold text-slate-800'>
             No Teams Found
           </h2>
 
-          <p className="mt-2 text-sm text-slate-500">Create your first team</p>
+          <p className='mt-2 text-sm text-slate-500'>Create your first team</p>
         </div>
       ) : (
         /* teams grid */
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className='grid gap-6 lg:grid-cols-2'>
           {teams.map((team) => (
             <div
               key={team._id}
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+              className='rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md'
             >
               {/* top */}
-              <div className="flex items-start justify-between">
+              <div className='flex items-start justify-between'>
                 <div>
-                  <h3 className="text-xl font-semibold text-slate-800">
+                  <h3 className='text-xl font-semibold text-slate-800'>
                     {team.name}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                  <p className='mt-2 text-sm leading-6 text-slate-500'>
                     {team.description || 'No description'}
                   </p>
                 </div>
 
-                <div className="flex gap-2">
+                <div className='flex gap-2'>
                   <button
                     onClick={() => handleEditClick(team)}
-                    className="rounded-xl border border-green-200 bg-green-50 p-3 text-green-600 transition hover:bg-green-100"
+                    className='rounded-xl border border-green-200 bg-green-50 p-3 text-green-600 hover:bg-green-100'
                   >
                     <Pencil size={18} />
                   </button>
 
                   <button
                     onClick={() => handleDeleteTeam(team._id)}
-                    className="rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 transition hover:bg-red-100"
+                    className='rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 hover:bg-red-100'
                   >
                     <Trash2 size={18} />
                   </button>
@@ -283,9 +283,9 @@ function Teams() {
 
               {/* edit form */}
               {editTeamId === team._id && (
-                <form onSubmit={handleUpdateTeam} className="mt-5 space-y-4">
+                <form onSubmit={handleUpdateTeam} className='mt-5 space-y-4'>
                   <input
-                    type="text"
+                    type='text'
                     value={editFormData.name}
                     onChange={(e) =>
                       setEditFormData({
@@ -293,11 +293,11 @@ function Teams() {
                         name: e.target.value
                       })
                     }
-                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+                    className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
                   />
 
                   <textarea
-                    rows="3"
+                    rows='3'
                     value={editFormData.description}
                     onChange={(e) =>
                       setEditFormData({
@@ -305,21 +305,21 @@ function Teams() {
                         description: e.target.value
                       })
                     }
-                    className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+                    className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
                   ></textarea>
 
-                  <div className="flex gap-3">
+                  <div className='flex gap-3'>
                     <button
-                      type="submit"
-                      className="rounded-2xl bg-blue-600 px-5 py-2 font-medium text-white hover:bg-blue-700"
+                      type='submit'
+                      className='rounded-2xl bg-blue-600 px-5 py-2 font-medium text-white hover:bg-blue-700'
                     >
                       Save
                     </button>
 
                     <button
-                      type="button"
+                      type='button'
                       onClick={() => setEditTeamId(null)}
-                      className="rounded-2xl border border-slate-300 px-5 py-2 font-medium text-slate-700 hover:bg-slate-100"
+                      className='rounded-2xl border border-slate-300 px-5 py-2 font-medium text-slate-700 hover:bg-slate-100'
                     >
                       Cancel
                     </button>
@@ -328,23 +328,23 @@ function Teams() {
               )}
 
               {/* members */}
-              <div className="mt-6">
-                <h4 className="mb-3 font-semibold text-slate-700">
+            <div className='mt-6'>
+              <h4 className='mb-3 font-semibold text-slate-700'>
                   Team Members ({team.members?.length || 0})
                 </h4>
 
                 {team.members && team.members.length > 0 ? (
-                  <div className="space-y-3">
+                <div className='space-y-3'>
                     {team.members.map((member) => (
                       <div
                         key={member._id}
-                        className="flex items-center justify-between rounded-2xl bg-slate-100 px-4 py-3"
+                      className='flex items-center justify-between rounded-2xl bg-slate-100 px-4 py-3'
                       >
                         <div>
-                          <span className="block text-sm font-medium text-slate-700">
-                            {member.name}
-                          </span>
-                          <span className="text-xs text-slate-500">
+                        <span className='block text-sm font-medium text-slate-700'>
+                          {member.name}
+                        </span>
+                        <span className='text-xs text-slate-500'>
                             {member.email}
                           </span>
                         </div>
@@ -353,7 +353,7 @@ function Teams() {
                           onClick={() =>
                             handleRemoveMember(team._id, member._id)
                           }
-                          className="rounded-lg p-2 text-red-500 hover:bg-red-100"
+                          className='rounded-lg p-2 text-red-500 hover:bg-red-100'
                         >
                           <X size={16} />
                         </button>
@@ -361,13 +361,13 @@ function Teams() {
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-slate-500">No members added yet</p>
+                  <p className='text-sm text-slate-500'>No members added yet</p>
                 )}
 
                 {/* add member */}
-                <div className="mt-5 flex gap-3">
+                <div className='mt-5 flex gap-3'>
                   <input
-                    type="text"
+                    type='text'
                     value={memberInputs[team._id] || ''}
                     onChange={(e) =>
                       setMemberInputs((prev) => ({
@@ -375,12 +375,12 @@ function Teams() {
                         [team._id]: e.target.value
                       }))
                     }
-                    placeholder="Enter member Id"
-                    className="flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+                    placeholder='Enter member Id'
+                    className='flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
                   />
                   <button
                     onClick={() => handleAddMember(team._id)}
-                    className="flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700"
+                    className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700'
                   >
                     <UserPlus size={18} />
                     Add

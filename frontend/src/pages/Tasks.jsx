@@ -135,12 +135,12 @@ function Tasks() {
   }
 
   return (
-    <div className="w-full">
+    <div className='w-full'>
       {/* header */}
-      <div className="mb-8 flex items-center justify-between">
+      <div className='mb-8 flex items-center justify-between'>
         <div>
-          <h1 className="text-3xl font-bold text-slate-900">Tasks</h1>
-          <p className="mt-2 text-slate-500">
+          <h1 className='text-3xl font-bold text-slate-900'>Tasks</h1>
+          <p className='mt-2 text-slate-500'>
             Organize and manage your workflow.
           </p>
         </div>
@@ -148,7 +148,7 @@ function Tasks() {
         {!showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700"
+            className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700'
           >
             <Plus size={18} /> Create Task
           </button>
@@ -157,7 +157,7 @@ function Tasks() {
 
       {/* error */}
       {error && (
-        <div className="mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600">
+        <div className='mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600'>
           {error}
         </div>
       )}
@@ -166,15 +166,15 @@ function Tasks() {
       {showForm && (
         <form
           onSubmit={handleSubmit}
-          className="mb-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm"
+          className='mb-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm'
         >
-          <h2 className="mb-5 text-xl font-semibold text-slate-800">
+          <h2 className='mb-5 text-xl font-semibold text-slate-800'>
             {editTaskId ? 'Edit Task' : 'Create New Task'}
           </h2>
 
-          <div className="space-y-5">
+          <div className='space-y-5'>
             <input
-              type="text"
+              type='text'
               value={formData.title}
               onChange={(e) =>
                 setFormData({
@@ -182,12 +182,12 @@ function Tasks() {
                   title: e.target.value
                 })
               }
-              placeholder="Title of the Task"
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600"
+              placeholder='Title of the Task'
+              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600'
             />
 
             <textarea
-              rows="4"
+              rows='4'
               value={formData.description}
               onChange={(e) =>
                 setFormData({
@@ -195,12 +195,12 @@ function Tasks() {
                   description: e.target.value
                 })
               }
-              placeholder="Description of the Task"
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+              placeholder='Description of the Task'
+              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
             ></textarea>
-            <div className="grid gap-4 md:grid-cols-2">
+            <div className='grid gap-4 md:grid-cols-2'>
               <input
-                type="date"
+                type='date'
                 value={formData.deadline}
                 onChange={(e) =>
                   setFormData({
@@ -208,7 +208,7 @@ function Tasks() {
                     deadline: e.target.value
                   })
                 }
-                className="rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+                className='rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
               />
               <select
                 value={formData.priority}
@@ -218,16 +218,16 @@ function Tasks() {
                     priority: e.target.value
                   })
                 }
-                className="rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+                className='rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
               >
-                <option value="low">Low</option>
-                <option value="medium">Medium</option>
-                <option value="high">High</option>
+                <option value='low'>Low</option>
+                <option value='medium'>Medium</option>
+                <option value='high'>High</option>
               </select>
             </div>
 
             <input
-              type="text"
+              type='text'
               value={formData.category}
               onChange={(e) =>
                 setFormData({
@@ -235,22 +235,22 @@ function Tasks() {
                   category: e.target.value
                 })
               }
-              placeholder="Category"
-              className="w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500"
+              placeholder='Category'
+              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
             />
 
-            <div className="flex gap-3">
+            <div className='flex gap-3'>
               <button
-                type="submit"
-                className="rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700"
+                type='submit'
+                className='rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700'
               >
                 {editTaskId ? 'Save Changes' : 'Create Task'}
               </button>
 
               <button
-                type="button"
+                type='button'
                 onClick={resetForm}
-                className="rounded-2xl border border-slate-300 px-6 py-3 font-medium text-slate-700 hover:bg-slate-100"
+                className='rounded-2xl border border-slate-300 px-6 py-3 font-medium text-slate-700 hover:bg-slate-100'
               >
                 Cancel
               </button>
@@ -264,49 +264,49 @@ function Tasks() {
         <Loader />
       ) : tasks.length === 0 ? (
         /* empty state */
-        <div className="rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm">
-          <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600">
+        <div className='rounded-3xl border border-slate-200 bg-white px-6 py-16 text-center shadow-sm'>
+          <div className='mx-auto flex h-16 w-16 items-center justify-center rounded-full bg-blue-100 text-blue-600'>
             <ClipboardList size={30} />
           </div>
 
-          <h2 className="mt-5 text-xl font-semibold text-slate-800">
+          <h2 className='mt-5 text-xl font-semibold text-slate-800'>
             No tasks found
           </h2>
 
-          <p className="mt-2 text-sm text-slate-500">
+          <p className='mt-2 text-sm text-slate-500'>
             Create your first task to start working
           </p>
         </div>
       ) : (
         /* task cards */
-        <div className="grid gap-6 lg:grid-cols-2">
+        <div className='grid gap-6 lg:grid-cols-2'>
           {tasks.map((task) => (
             <div
               key={task._id}
-              className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md"
+              className='rounded-3xl border border-slate-200 bg-white p-6 shadow-sm transition hover:shadow-md'
             >
               {/* top section */}
-              <div className="flex items-start justify-between">
+              <div className='flex items-start justify-between'>
                 <div>
-                  <h3 className="text-xl font-semibold text-slate-800">
+                  <h3 className='text-xl font-semibold text-slate-800'>
                     {task.title}
                   </h3>
 
-                  <p className="mt-2 text-sm leading-6 text-slate-500">
+                  <p className='mt-2 text-sm leading-6 text-slate-500'>
                     {task.description || 'No description'}
                   </p>
                 </div>
-                <div className="flex gap-2">
+                <div className='flex gap-2'>
                   <button
                     onClick={() => handleEdit(task)}
-                    className="rounded-xl border border-green-200 bg-green-50 p-3 text-green-600 hover:bg-green-100"
+                    className='rounded-xl border border-green-200 bg-green-50 p-3 text-green-600 hover:bg-green-100'
                   >
                     <Pencil size={18} />
                   </button>
 
                   <button
                     onClick={() => handleDelete(task._id)}
-                    className="rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 hover:bg-red-100"
+                    className='rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 hover:bg-red-100'
                   >
                     <Trash2 size={18} />
                   </button>
@@ -314,23 +314,23 @@ function Tasks() {
               </div>
 
               {/* task info */}
-              <div className="mt-5 flex flex-wrap gap-3">
-                <span className="rounded-full bg-blue-100 px-4 py-2 text-xs font-semibold text-blue-600">
+              <div className='mt-5 flex flex-wrap gap-3'>
+                <span className='rounded-full bg-blue-100 px-4 py-2 text-xs font-semibold text-blue-600'>
                   {task.priority || 'medium'}
                 </span>
 
                 <select
                   value={task.status || 'pending'}
                   onChange={(e) => handleStatusChange(task._id, e.target.value)}
-                  className="rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 outline-none"
+                  className='rounded-full border border-slate-300 bg-white px-4 py-2 text-xs font-semibold text-slate-700 outline-none'
                 >
-                  <option value="pending">Pending</option>
-                  <option value="inProgress">In Progress</option>
-                  <option value="completed">Completed</option>
+                  <option value='pending'>Pending</option>
+                  <option value='inProgress'>In Progress</option>
+                  <option value='completed'>Completed</option>
                 </select>
 
                 {task.category && (
-                  <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-700">
+                  <span className='rounded-full bg-slate-100 px-4 py-2 text-xs font-semibold text-slate-700'>
                     {task.category}
                   </span>
                 )}
@@ -338,7 +338,7 @@ function Tasks() {
 
               {/* deadline */}
               {task.deadline && (
-                <p className="mt-5 text-sm text-slate-500">
+                <p className='mt-5 text-sm text-slate-500'>
                   Deadline: {new Date(task.deadline).toLocaleDateString()}
                 </p>
               )}
