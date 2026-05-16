@@ -12,13 +12,15 @@ export const AuthProvider = ({ children }) => {
     const storedToken = localStorage.getItem('token')
     const storedUser = localStorage.getItem('user')
 
-    if (storedToken) {
+    if (storedToken && storedUser) {
+      const userData = JSON.parse(storedUser)
       setToken(storedToken)
-      setUser(storedUser ? JSON.parse(storedUser) : null)
+      setUser(userData)
       setIsLoggedIn(true)
-    }
-
+      setLoading(false)
+    } else {
     setLoading(false)
+    }
   }, [])
 
   const register = (userData, userToken) => {
@@ -29,12 +31,17 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('user', JSON.stringify(userData))
   }
 
-  const login = (userData, userToken) => {
+  const login = (userData, userToken, rememberToken = null) => {
     setUser(userData)
     setToken(userToken)
     setIsLoggedIn(true)
     localStorage.setItem('token', userToken)
     localStorage.setItem('user', JSON.stringify(userData))
+
+    if (rememberToken) {
+      localStorage.setItem('rememberToken', rememberToken)
+      localStorage.setItem('rememberEnabled', 'true')
+    }
   }
 
   const updateUser = (updateUserData) => {
@@ -48,6 +55,8 @@ export const AuthProvider = ({ children }) => {
     setIsLoggedIn(false)
     localStorage.removeItem('token')
     localStorage.removeItem('user')
+    localStorage.removeItem('rememberToken')
+    localStorage.removeItem('rememberEnabled')
   }
 
   return (
@@ -67,3 +76,4 @@ export const AuthProvider = ({ children }) => {
     </AuthContext.Provider>
   )
 }
+

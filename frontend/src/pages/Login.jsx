@@ -35,15 +35,24 @@ function Login() {
     setError('')
 
     try {
-      const res = await authApi.loginUser(formData.email, formData.password)
-      login(res.data.user, res.data.token)
+      const res = await authApi.login(formData.email, formData.password, formData.remember)
+
+      localStorage.setItem('token', res.data.token)
+
+      if (formData.remember && res.data.rememberToken) {
+        localStorage.setItem('rememberToken', res.data.rememberToken)
+        localStorage.setItem('rememberEnabled', 'true')
+      }
+
+      login(res.data.user, res.data.token, res.data.rememberToken || null)
       navigate('/dashboard')
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed. Please try again.')
+      setError(err.response?.data?.message  || 'Login failed. Please try again.')
     } finally {
       setLoading(false)
     }
   }
+
 
   return (
     <div
@@ -137,9 +146,9 @@ function Login() {
                 name='remember'
                 checked={formData.remember}
                 onChange={handleChange}
-                className='accent-blue-500'
+                className='rounded border-slate-300'
               />
-              Remember me
+              <span className='text-sm text-slate-300'>Remember me</span>
             </label>
             <button
               type='button'

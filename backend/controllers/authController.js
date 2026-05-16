@@ -32,7 +32,7 @@ export const registerUser = asyncHandler(async (req, res) => {
 })
 
 export const loginUser = asyncHandler(async (req, res) => {
-  const { email, password } = req.body
+  const { email, password, rememberMe } = req.body
 
   if (!email || !password) {
     const error = new Error('Email and password are required')
@@ -59,12 +59,21 @@ export const loginUser = asyncHandler(async (req, res) => {
   }
 
   user.lastLogin = new Date()
+
+  let rememberToken = null
+  if (rememberMe) {
+    rememberToken = generateToken(user._id, '30d')
+    user.rememberToken = rememberToken
+    user.rememberTokenExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+  }
+
   await user.save()
 
   res.status(200).json({
     success: true,
     message: 'Login successful',
     token: generateToken(user._id),
+    rememberToken: rememberMe ? rememberToken : null,
     user
   })
 })

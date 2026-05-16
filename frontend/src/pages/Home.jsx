@@ -6,8 +6,20 @@ import {
   Users,
   Bell
 } from 'lucide-react'
+import { useEffect, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { AuthContext } from '../context/AuthContext'
 
 function Home() {
+  const navigate = useNavigate()
+  const { isLoggedIn, loading } = useContext(AuthContext)
+
+  useEffect(() => {
+    if (!loading && isLoggedIn) {
+      navigate('/dashboard', { replace: true })
+    }
+  }, [isLoggedIn, loading, navigate])
+
   const features = [
     {
       title: 'Task Management',

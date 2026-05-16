@@ -43,6 +43,18 @@ const userSchema = new mongoose.Schema(
     avatar: { type: String, default: '' },
 
     lastLogin: { type: Date, default: null },
+
+    rememberToken: {
+      type: String,
+      default: null,
+      select: false,
+    },
+
+    rememberTokenExpiry: {
+      type: Date,
+      default: null,
+      select: false,
+    }
   },
   { timestamps: true }
 )
