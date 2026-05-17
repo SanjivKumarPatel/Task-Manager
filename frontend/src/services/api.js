@@ -34,7 +34,14 @@ export const authApi = {
 
   login: (email, password, rememberMe) => api.post('/auth/login', { email, password, rememberMe }),
   
-  getProfile: () => api.get('/auth/profile')
+  getProfile: () => api.get('/auth/profile'),
+
+  forgotPassword: (email) => api.post('/auth/forgot-password', { email }),
+
+  verifyOtp: (email, otp) => api.post('/auth/verify-otp', { email, otp }),
+
+  resetPassword: (email, password, confirmPassword) =>
+    api.post('/auth/reset-password', { email, password, confirmPassword })
 }
 
 export const taskApi = {

@@ -1,5 +1,8 @@
 import { Routes, Route } from 'react-router-dom'
 import { ToastContainer } from 'react-toastify'
+import ForgotPassword from './pages/ForgotPassword'
+import VerifyOtp from './pages/VerifyOtp'
+import ResetPassword from './pages/ResetPassword'
 
 import Home from './pages/Home'
 import Login from './pages/Login'
@@ -21,13 +24,16 @@ function App() {
 
       <Routes>
         {/* Public Routes */}
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
+        <Route path='/' element={<Home />} />
+        <Route path='/login' element={<Login />} />
+        <Route path='/register' element={<Register />} />
+        <Route path='/forgot-password' element={<ForgotPassword />} />
+        <Route path='/verify-otp' element={<VerifyOtp />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
 
         {/* Protected Routes */}
         <Route
-          path="/dashboard"
+          path='/dashboard'
           element={
             <ProtectedRoute>
               <DashboardLayout>
@@ -37,7 +43,7 @@ function App() {
           }
         />
         <Route
-          path="/tasks"
+          path='/tasks'
           element={
             <ProtectedRoute>
               <DashboardLayout>
@@ -47,7 +53,7 @@ function App() {
           }
         />
         <Route
-          path="/teams"
+          path='/teams'
           element={
             <ProtectedRoute>
               <DashboardLayout>
@@ -57,7 +63,7 @@ function App() {
           }
         />
         <Route
-          path="/notifications"
+          path='/notifications'
           element={
             <ProtectedRoute>
               <DashboardLayout>
@@ -67,7 +73,7 @@ function App() {
           }
         />
         <Route
-          path="/profile"
+          path='/profile'
           element={
             <ProtectedRoute>
               <DashboardLayout>
@@ -76,7 +82,7 @@ function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="*" element={<NotFound />} />
+        <Route path='*' element={<NotFound />} />
       </Routes>
     </>
   )
