@@ -8,6 +8,9 @@ function Navbar() {
   const navigate = useNavigate()
   if (!isLoggedIn) return null
 
+  const handleNotifications = () => {
+    navigate('/notifications')
+  }
 
   const handleLogout = () => {
     logout()
@@ -33,7 +36,7 @@ function Navbar() {
       {/* right side */}
       <div className='ml-8 flex items-center gap-4'>
         {/* notifications */}
-        <button className='relative flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-500/10 bg-[#0b1328] text-white hover:border-blue-500 transition'>
+        <button onClick={handleNotifications} className='relative flex h-12 w-12 items-center justify-center rounded-2xl border border-blue-500/10 bg-[#0b1328] text-white hover:border-blue-500 transition'>
           <Bell size={20} />
 
           <span className='absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-blue-600 text-[10px] font-semibold text-white'>
