@@ -37,7 +37,7 @@ export const resetOtpTemplate = (name, otp) => {
           </div>
 
           <p style='color: rgb(220,38,38); font-size: 14px; font-weight: 600; margin: 0;'>
-           ⏱ OTP expires in 10 minutes
+           ⏱ OTP expires in 5 minutes
           </p>
 
           <p style='font-size: 14px; color: rgb(100,116,139); margin-top: 25px; line-height: 1.6;'>

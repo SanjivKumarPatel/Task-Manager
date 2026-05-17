@@ -127,7 +127,8 @@ export const forgotPassword = asyncHandler(async (req, res) => {
     await transporter.sendMail({
       from: process.env.EMAIL_FROM,
       to: user.email,
-      ...emailContent
+      Subject: 'Password Reset OTP',
+      html: emailContent
     })
 
     res.status(200).json({
