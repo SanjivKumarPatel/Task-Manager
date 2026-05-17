@@ -9,14 +9,19 @@ import {
   addMember,
   removeMember
 } from '../controllers/teamController.js'
+import adminMiddleware from '../middleware/adminMiddleware.js'
 
 const teamRouter = express.Router()
 
 teamRouter.use(protect)
 
-teamRouter.route('/').post(createTeam).get(getAllTeams)
-teamRouter.route('/:id').get(getTeam).put(updateTeam).delete(deleteTeam)
-teamRouter.post('/:id/members', addMember)
-teamRouter.delete('/:id/members/:memberId', removeMember)
+teamRouter.get('/', getAllTeams)
+teamRouter.get('/:id', getTeam)
+
+teamRouter.post('/', adminMiddleware, createTeam)
+teamRouter.put('/:id', adminMiddleware, updateTeam)
+teamRouter.put('/:id', adminMiddleware, deleteTeam)
+teamRouter.put('/:id/members', adminMiddleware, addMember)
+teamRouter.put('/:id/members/:memberId', adminMiddleware, removeMember)
 
 export default teamRouter

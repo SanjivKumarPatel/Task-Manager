@@ -29,7 +29,7 @@ export const registerUser = asyncHandler(async (req, res) => {
   res.status(201).json({
     success: true,
     message: 'User registered successfully',
-    token: generateToken(user._id),
+    token: generateToken(user._id, user.role),
     user
   })
 })
@@ -65,7 +65,7 @@ export const loginUser = asyncHandler(async (req, res) => {
 
   let rememberToken = null
   if (rememberMe) {
-    rememberToken = generateToken(user._id, '30d')
+    rememberToken = generateToken(user._id, user.role, '30d')
     user.rememberToken = rememberToken
     user.rememberTokenExpiry = new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
   }
@@ -75,7 +75,7 @@ export const loginUser = asyncHandler(async (req, res) => {
   res.status(200).json({
     success: true,
     message: 'Login successful',
-    token: generateToken(user._id),
+    token: generateToken(user._id, user.role),
     rememberToken: rememberMe ? rememberToken : null,
     user
   })
