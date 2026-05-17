@@ -7,8 +7,8 @@ const authRouter = express.Router()
 authRouter.post('/register', registerUser)
 authRouter.post('/login', loginUser)
 authRouter.get('/profile', protect, getProfile)
-authRouter.post('/forgot-password', forgetPassword)
+authRouter.post('/forgot-password', forgotPassword)
 authRouter.post('/verify-otp', verifyOtp)
-authRouter.post('reset-password', resetPassword)
+authRouter.post('/reset-password', resetPassword)
 
 export default authRouter
