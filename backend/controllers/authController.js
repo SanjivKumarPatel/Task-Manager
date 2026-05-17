@@ -1,6 +1,9 @@
 import asyncHandler from '../middleware/asyncHandler.js'
 import User from '../models/User.js'
 import generateToken from '../utils/generateToken.js'
+import getTransporter from '../config/email.js'
+import { generateOtp } from '../utils/generateOtp.js'
+import { resetOtpTemplate } from '../utils/emailTemplates.js'
 
 export const registerUser = asyncHandler(async (req, res) => {
   const { name, email, password } = req.body
@@ -90,4 +93,113 @@ export const getProfile = asyncHandler(async (req, res) => {
   }
 
   res.status(200).json({ success: true, user })
+})
+
+
+export const forgotPassword = asyncHandler(async (req, res) => {
+  const { email } = req.body
+  if (!email) {
+    const error = new Error('Email is required')
+    error.statusCode = 400
+    throw error
+  }
+
+  const user = await User.findOne({ email: email.toLowerCase().trim() })
+
+  if (!user) {
+    const error = new Error('User not found')
+    error.statusCode = 404
+    throw error
+  }
+
+  const otp = generateOtp()
+
+  user.resetOtp = otp
+  user.resetOtpExpiry = new Date(Date.now() + 5 * 60 * 1000)
+  user.resetOtpVerified = false
+  await user.save()
+
+  try {
+    const transporter = getTransporter()
+
+    const emailContent = resetOtpTemplate(user.name, otp)
+
+    await transporter.sendMail({
+      from: process.env.EMAIL_FROM,
+      to: user.email,
+      ...emailContent
+    })
+
+    res.status(200).json({
+      success: true,
+      message: 'OTP sent to your email'
+    })
+  } catch (err) {
+    user.resetOtp = null
+    user.resetOtpExpiry = null
+    await user.save()
+
+    const error = new Error('Failed to send OTP email')
+    error.statusCode = 500
+    throw error
+  }
+})
+
+export const verifyOtp = asyncHandler(async (req, res) => {
+  const { email, otp } = req.body
+
+  if (!email || !otp) {
+    const error = new Error('Email and OTP are required')
+    error.statusCode = 400
+    throw error
+  }
+
+  const user = await User.findOne({
+    email: email.toLowerCase().trim(),
+    resetOtp: otp,
+    resetOtpExpiry: { $gt: Date.now() }
+  })
+
+  if (!user) {
+    const error = new Error('Invalid or expired OTP')
+    error.statusCode = 400
+    throw error
+  }
+
+  user.resetOtpVerified = true
+  await user.save()
+
+  res.status(200).json({ success: true, message: 'OTP verified successfully'})
+})
+
+export const resetPassword = asyncHandler(async (req, res) => {
+  const { email, password, confirmPassword } = req.body
+
+  if (!email || !password || !confirmPassword) {
+    const error = new Error('All fields are required')
+    error.statusCode = 400
+    throw error
+  }
+
+  const user = await User.findOne({ email: email.toLowerCase().trim() })
+
+  if (!user) {
+    const error = new Error('User not found')
+    error.statusCode = 404
+    throw error
+  }
+
+  if (!user.resetOtpVerified) {
+    const error = new Error('Please verify OTP first')
+    error.statusCode = 400
+    throw error
+  }
+
+  user.password = password
+  user.resetOtp = null
+  user.resetOtpExpiry = null
+  user.resetOtpVerified = false
+  await user.save()
+
+  res.status(200).json({ success: true, message: 'Password reset successfully'})
 })
