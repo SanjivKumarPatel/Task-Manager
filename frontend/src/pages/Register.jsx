@@ -12,7 +12,8 @@ function Register() {
     name: '',
     email: '',
     password: '',
-    confirmPassword: ''
+    confirmPassword: '',
+    role: 'member'
   })
 
   const [loading, setLoading] = useState(false)
@@ -42,7 +43,8 @@ function Register() {
       const res = await authApi.registerUser(
         formData.name,
         formData.email,
-        formData.password
+        formData.password,
+        formData.role
       )
 
       register(res.data.user, res.data.token)
@@ -141,6 +143,20 @@ function Register() {
               placeholder='Enter your email'
               className='w-full rounded-xl border border-blue-400/20 bg-white/5 px-4 py-3 text-white placeholder-gray-400 outline-none focus:border-blue-400 focus:ring-blue-500/30'
             />
+          </div>
+
+          {/* role */}
+          <div>
+            <label className='block text-sm text-gray-200 mb-2'>Register as</label>
+            <select
+              name='role'
+              value={formData.role}
+              onChange={handleChange}
+              className='w-full rounded-xl border border-blue-400/20 bg-white/5 px-4 py-3 text-white outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-500/30'
+            >
+              <option value='member' className='bg-slate-900'>Member</option>
+              <option value='admin' className='bg-slate-900'>Admin</option>
+            </select>
           </div>
 
           {/* password */}
