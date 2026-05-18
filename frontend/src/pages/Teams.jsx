@@ -1,15 +1,19 @@
-import { useEffect, useState } from 'react'
+import { useContext, useEffect, useState } from 'react'
 import { Users, Plus, Trash2, Pencil, UserPlus, X } from 'lucide-react'
-
+import { AuthContext } from '../context/AuthContext'
 import { teamApi } from '../services/api.js'
 import Loader from '../components/Loader.jsx'
+import AddMemberForm from '../components/AddMemberForm'
 
 function Teams() {
+  const { user } = useContext(AuthContext)
   const [teams, setTeams] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [showForm, setShowForm] = useState(false)
   const [editTeamId, setEditTeamId] = useState(null)
+  const [showAddMemberForm, setShowAddMemberForm] = useState(false)
+  const [currentTeamId, setCurrentTeamId] = useState(null)
 
   const [formData, setFormData] = useState({
     name: '',
@@ -21,7 +25,6 @@ function Teams() {
     description: ''
   })
 
-  const [memberInputs, setMemberInputs] = useState({})
   useEffect(() => {
     fetchTeams()
   }, [])
@@ -108,27 +111,12 @@ function Teams() {
     }
   }
 
-  const handleAddMember = async (teamId) => {
-    const memberId = memberInputs[teamId]
-
-    if (!memberId?.trim()) {
-      return setError('Member ID is required')
-    }
-
-    try {
-      const res = await teamApi.addMember(teamId, memberId)
-
-      setTeams((prev) =>
-        prev.map((team) => (team._id === teamId ? res.data.team : team))
-      )
-
-      setMemberInputs((prev) => ({
-        ...prev,
-        [teamId]: ''
-      }))
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to add member')
-    }
+  const handleMemberAdded = (updatedTeam) => {
+    setTeams((prev) =>
+      prev.map((team) => (team._id === updatedTeam._id ? updatedTeam : team))
+    )
+    setShowAddMemberForm(false)
+    setCurrentTeamId(null)
   }
 
   const handleRemoveMember = async (teamId, memberId) => {
@@ -154,7 +142,7 @@ function Teams() {
           </p>
         </div>
 
-        {!showForm && (
+        {user?.role === 'admin' && !showForm && (
           <button
             onClick={() => setShowForm(true)}
             className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700'
@@ -170,6 +158,18 @@ function Teams() {
         <div className='mb-6 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-600'>
           {error}
         </div>
+      )}
+
+      {/* AddMemberForm Modal */}
+      {showAddMemberForm && (
+        <AddMemberForm
+          teamId={currentTeamId}
+          onClose={() => {
+            setShowAddMemberForm(false)
+            setCurrentTeamId(null)
+          }}
+          onMemberAdded={handleMemberAdded}
+        />
       )}
 
       {/* create form */}
@@ -264,21 +264,23 @@ function Teams() {
                   </p>
                 </div>
 
-                <div className='flex gap-2'>
-                  <button
-                    onClick={() => handleEditClick(team)}
-                    className='rounded-xl border border-green-200 bg-green-50 p-3 text-green-600 hover:bg-green-100'
-                  >
-                    <Pencil size={18} />
-                  </button>
+                {user?.role === 'admin' && (
+                  <div className='flex gap-2'>
+                    <button
+                      onClick={() => handleEditClick(team)}
+                      className='rounded-xl border border-green-200 bg-green-50 p-3 text-green-600 hover:bg-green-100'
+                    >
+                      <Pencil size={18} />
+                    </button>
 
-                  <button
-                    onClick={() => handleDeleteTeam(team._id)}
-                    className='rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 hover:bg-red-100'
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
+                    <button
+                      onClick={() => handleDeleteTeam(team._id)}
+                      className='rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 hover:bg-red-100'
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* edit form */}
@@ -365,27 +367,20 @@ function Teams() {
                 )}
 
                 {/* add member */}
-                <div className='mt-5 flex gap-3'>
-                  <input
-                    type='text'
-                    value={memberInputs[team._id] || ''}
-                    onChange={(e) =>
-                      setMemberInputs((prev) => ({
-                        ...prev,
-                        [team._id]: e.target.value
-                      }))
-                    }
-                    placeholder='Enter member Id'
-                    className='flex-1 rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
-                  />
-                  <button
-                    onClick={() => handleAddMember(team._id)}
-                    className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700'
-                  >
-                    <UserPlus size={18} />
-                    Add
-                  </button>
-                </div>
+                {user?.role === 'admin' && (
+                  <div className='mt-5'>
+                    <button
+                      onClick={() => {
+                        setCurrentTeamId(team._id)
+                        setShowAddMemberForm(true)
+                      }}
+                      className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white hover:bg-blue-700 transition'
+                    >
+                      <UserPlus size={18} />
+                      Add Member
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           ))}
