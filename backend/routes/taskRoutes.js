@@ -8,6 +8,7 @@ import {
   updateTask,
   deleteTask
 } from '../controllers/taskController.js'
+import { generateSubtasks } from '../controllers/aiController.js'
 
 const taskRouter = express.Router()
 
@@ -15,6 +16,7 @@ taskRouter.use(protect)
 
 taskRouter.post('/', adminMiddleware, createTask)
 taskRouter.delete('/:id', adminMiddleware, deleteTask)
+taskRouter.post('/:id/generate-subtasks', adminMiddleware, generateSubtasks)
 
 taskRouter.get('/', getAllTasks)
 taskRouter.get('/:id', getTask)
