@@ -1,22 +1,16 @@
-import { useEffect, useState } from 'react'
-import { Plus, Pencil, Trash2, ClipboardList } from 'lucide-react'
-
+import { useContext, useEffect, useState } from 'react'
+import { Plus, Trash2, ClipboardList } from 'lucide-react'
+import { AuthContext } from '../context/AuthContext'
 import { taskApi } from '../services/api.js'
 import Loader from '../components/Loader.jsx'
+import TaskForm from '../components/TaskForm'
 
 function Tasks() {
+  const { user } = useContext(AuthContext)
   const [tasks, setTasks] = useState([])
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  const [showForm, setShowForm] = useState(false)
-  const [editTaskId, setEditTaskId] = useState(null)
-  const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    deadline: '',
-    priority: 'medium',
-    category: ''
-  })
+  const [showTaskForm, setShowTaskForm] = useState(false)
 
   useEffect(() => {
     fetchTasks()
@@ -36,70 +30,9 @@ function Tasks() {
     }
   }
 
-  const resetForm = () => {
-    setFormData({
-      title: '',
-      description: '',
-      deadline: '',
-      priority: 'medium',
-      category: ''
-    })
-    setEditTaskId(null)
-    setShowForm(false)
-  }
-
-  const handleSubmit = async (e) => {
-    e.preventDefault()
-
-    if (!formData.title.trim()) {
-      return setError('Task title is required')
-    }
-
-    try {
-      setError('')
-      if (editTaskId) {
-        const res = await taskApi.updateTask(
-          editTaskId,
-          formData.title,
-          formData.description,
-          formData.deadline,
-          formData.priority,
-          formData.category,
-          'pending'
-        )
-
-        setTasks((prev) =>
-          prev.map((task) => (task._id === editTaskId ? res.data.task : task))
-        )
-      } else {
-        const res = await taskApi.createTask(
-          formData.title,
-          formData.description,
-          formData.deadline,
-          formData.priority,
-          formData.category
-        )
-
-        setTasks((prev) => [res.data.task, ...prev])
-      }
-
-      resetForm()
-    } catch (err) {
-      setError(err.response?.data?.message || 'Failed to save task')
-    }
-  }
-
-  const handleEdit = (task) => {
-    setShowForm(true)
-    setEditTaskId(task._id)
-
-    setFormData({
-      title: task.title,
-      description: task.description || '',
-      deadline: task.deadline ? task.deadline.split('T')[0] : '',
-      priority: task.priority || 'medium',
-      category: task.category || ''
-    })
+  const handleTaskCreated = (newTask) => {
+    setTasks((prev) => [newTask, ...prev])
+    setShowTaskForm(false)
   }
 
   const handleDelete = async (taskId) => {
@@ -145,9 +78,9 @@ function Tasks() {
           </p>
         </div>
 
-        {!showForm && (
+        {user?.role === 'admin' && !showTaskForm && (
           <button
-            onClick={() => setShowForm(true)}
+            onClick={() => setShowTaskForm(true)}
             className='flex items-center gap-2 rounded-2xl bg-blue-600 px-5 py-3 font-medium text-white transition hover:bg-blue-700'
           >
             <Plus size={18} /> Create Task
@@ -162,101 +95,12 @@ function Tasks() {
         </div>
       )}
 
-      {/* form */}
-      {showForm && (
-        <form
-          onSubmit={handleSubmit}
-          className='mb-8 rounded-3xl border border-slate-200 bg-white p-6 shadow-sm'
-        >
-          <h2 className='mb-5 text-xl font-semibold text-slate-800'>
-            {editTaskId ? 'Edit Task' : 'Create New Task'}
-          </h2>
-
-          <div className='space-y-5'>
-            <input
-              type='text'
-              value={formData.title}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  title: e.target.value
-                })
-              }
-              placeholder='Title of the Task'
-              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-600'
-            />
-
-            <textarea
-              rows='4'
-              value={formData.description}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  description: e.target.value
-                })
-              }
-              placeholder='Description of the Task'
-              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
-            ></textarea>
-            <div className='grid gap-4 md:grid-cols-2'>
-              <input
-                type='date'
-                value={formData.deadline}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    deadline: e.target.value
-                  })
-                }
-                className='rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
-              />
-              <select
-                value={formData.priority}
-                onChange={(e) =>
-                  setFormData({
-                    ...formData,
-                    priority: e.target.value
-                  })
-                }
-                className='rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
-              >
-                <option value='low'>Low</option>
-                <option value='medium'>Medium</option>
-                <option value='high'>High</option>
-              </select>
-            </div>
-
-            <input
-              type='text'
-              value={formData.category}
-              onChange={(e) =>
-                setFormData({
-                  ...formData,
-                  category: e.target.value
-                })
-              }
-              placeholder='Category'
-              className='w-full rounded-2xl border border-slate-300 px-4 py-3 outline-none focus:border-blue-500'
-            />
-
-            <div className='flex gap-3'>
-              <button
-                type='submit'
-                className='rounded-2xl bg-blue-600 px-6 py-3 font-medium text-white hover:bg-blue-700'
-              >
-                {editTaskId ? 'Save Changes' : 'Create Task'}
-              </button>
-
-              <button
-                type='button'
-                onClick={resetForm}
-                className='rounded-2xl border border-slate-300 px-6 py-3 font-medium text-slate-700 hover:bg-slate-100'
-              >
-                Cancel
-              </button>
-            </div>
-          </div>
-        </form>
+      {/* TaskForm Modal */}
+      {showTaskForm && (
+        <TaskForm
+          onClose={() => setShowTaskForm(false)}
+          onTaskCreated={handleTaskCreated}
+        />
       )}
 
       {/* loading */}
@@ -296,21 +140,16 @@ function Tasks() {
                     {task.description || 'No description'}
                   </p>
                 </div>
-                <div className='flex gap-2'>
-                  <button
-                    onClick={() => handleEdit(task)}
-                    className='rounded-xl border border-green-200 bg-green-50 p-3 text-green-600 hover:bg-green-100'
-                  >
-                    <Pencil size={18} />
-                  </button>
-
-                  <button
-                    onClick={() => handleDelete(task._id)}
-                    className='rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 hover:bg-red-100'
-                  >
-                    <Trash2 size={18} />
-                  </button>
-                </div>
+                {user?.role === 'admin' && (
+                  <div className='flex gap-2'>
+                    <button
+                      onClick={() => handleDelete(task._id)}
+                      className='rounded-xl border border-red-200 bg-red-50 p-3 text-red-600 hover:bg-red-100'
+                    >
+                      <Trash2 size={18} />
+                    </button>
+                  </div>
+                )}
               </div>
 
               {/* task info */}
