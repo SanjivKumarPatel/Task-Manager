@@ -3,7 +3,7 @@ import Task from '../models/Task.js'
 
 export const createTask = asyncHandler(async (req, res) => {
   const userId = req.user.id
-  const { title, description, deadline, priority, category } = req.body
+  const { title, description, deadline, priority, category, assignedTo } = req.body
 
   if (!title) {
     const error = new Error('Task title is required')
@@ -18,7 +18,7 @@ export const createTask = asyncHandler(async (req, res) => {
     priority,
     category,
     createdBy: userId,
-    assignedTo: userId
+    assignedTo: assignedTo || userId
   })
 
   res.status(201).json({
